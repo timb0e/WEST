@@ -167,7 +167,19 @@ arcpy.AddMessage("Done!")
 
 # Process: Starting at the top line (<area), iterate through table, assigning each record a plume ID by a decrement of 1
 arcpy.AddMessage("Generating plume levels")
-arcpy.CalculateField_management(Plume_Sort, "LINE_ID", "autoIncrement()", "PYTHON", "rec = 0\\ndef autoIncrement(): \\n    global rec\\n    pStart = 3  \\n    pInterval = 1 \\n    if (rec == 0):  \\n        rec = pStart  \\n    else:  \\n        rec -= pInterval\\n    return \"Level00\" + str(rec)")
+block = """
+rec = 0
+def autoIncrement():
+    global rec
+    pStart = 3
+    pInterval = 1
+    if (rec == 0):
+        rec = pStart
+    else:
+        rec -= pInterval
+    return "Level00"+str(rec)
+"""
+arcpy.CalculateField_management(Plume_Sort, "LINE_ID", "autoIncrement()", "PYTHON", block)
 arcpy.AddMessage("Done!")
 
 #######################
@@ -255,7 +267,7 @@ arcpy.AddMessage("Done!")
 
 # Process: Starting at the top line (<area), iterate through table, assigning each record a plume ID by a decrement of 1
 arcpy.AddMessage("Generating plume levels")
-arcpy.CalculateField_management('plume_clean_sort', "LINE_ID", "autoIncrement()", "PYTHON", "rec = 0\\ndef autoIncrement(): \\n    global rec\\n    pStart = 3  \\n    pInterval = 1 \\n    if (rec == 0):  \\n        rec = pStart  \\n    else:  \\n        rec -= pInterval\\n    return \"Level00\" + str(rec)")
+arcpy.CalculateField_management('plume_clean_sort', "LINE_ID", "autoIncrement()", "PYTHON", block)
 arcpy.AddMessage("Done!")
 
 #Create a new layer
@@ -837,4 +849,3 @@ with open(os.path.join(Working_Folder_Project, 'ground_surface_data.csv'), 'wb')
     wr.writerow(image_anaylsis_line4)
 
 # The End
-
